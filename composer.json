@@ -31,7 +31,7 @@
   },
   "require": {
     "php": "^7.2 || ^8.0",
-    "vlucas/phpdotenv": ">="
+    "vlucas/phpdotenv": ">=5.0"
   },
   "config": {
     "preferred-install": "dist",
