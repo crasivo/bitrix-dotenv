@@ -1,0 +1,47 @@
+{
+  "name": "crasivo/bitrix-dotenv",
+  "description": "Dotenv library adapter for 1C-Bitrix",
+  "type": "library",
+  "version": "0.0.1",
+  "license": "MIT",
+  "homepage": "https://github.com/crasivo/bitrix-dotenv",
+  "keywords": [
+    "bitrix",
+    "dotenv",
+    "adapter"
+  ],
+  "authors": [
+    {
+      "name": "Crasivo Dev",
+      "email": "crasivo.dev@gmail.com",
+      "role": "developer"
+    }
+  ],
+  "support": {
+    "issues": "https://github.com/crasivo/bitrix-dotenv/issues",
+    "source": "https://github.com/crasivo/bitrix-dotenv"
+  },
+  "autoload": {
+    "psr-4": {
+      "Crasivo\\Bitrix\\Dotenv\\": "src/"
+    },
+    "files": [
+      "src/helpers.php"
+    ]
+  },
+  "require": {
+    "php": "^7.2 || ^8.0",
+    "vlucas/phpdotenv": ">="
+  },
+  "config": {
+    "preferred-install": "dist",
+    "sort-packages": true
+  },
+  "extra": {
+    "branch-alias": {
+      "dev-main": "0.x-dev"
+    }
+  },
+  "minimum-stability": "stable",
+  "prefer-stable": true
+}
