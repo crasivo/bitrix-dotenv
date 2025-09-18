@@ -12,7 +12,7 @@ Implementation features:
 
 - 1C-Bitrix kernel version (main): `v20.5.400`
 - PHP version: `v7.2`
-- Dotenv version: `v2.10`
+- Dotenv version: `v5.0`
 
 # 🚀 Quick Start
 
