@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Crasivo\Bitrix\Dotenv;
 
-use Crasivo\Bitrix\Dotenv\Repository\Adapter\EnvAdapter;
 use Dotenv\Dotenv;
 use Dotenv\Repository\RepositoryBuilder;
 use Dotenv\Repository\RepositoryInterface;
@@ -24,7 +23,7 @@ class EnvLocator implements EnvLocatorInterface
      */
     public function __construct(?RepositoryInterface $repository = null)
     {
-        $this->repository = $repository ?? $this->createEnvRepository();
+        $this->repository = $repository ?? RepositoryBuilder::createWithDefaultAdapters()->make();
     }
 
     /**
@@ -42,7 +41,9 @@ class EnvLocator implements EnvLocatorInterface
      */
     public function get(string $key, $default = null)
     {
-        return $this->repository->get($key) ?? $default;
+        return ($value = $this->repository->get($key))
+            ? $this->formatValue($value)
+            : $default;
     }
 
     /**
@@ -61,13 +62,12 @@ class EnvLocator implements EnvLocatorInterface
      */
     public function load(?string $directory = null): void
     {
-        if (!is_dir($directory)) {
-            $directory = $_SERVER['DOCUMENT_ROOT'];
-        }
-
-        // load & initialize environments
-        @touch($directory . DIRECTORY_SEPARATOR . '.env');
-        $dotenv = Dotenv::create($this->repository, $directory);
+        $appEnv = $_ENV['APP_ENV'] ?? $_SERVER['APP_ENV'] ?? null;
+        $dotenv = Dotenv::create(
+            $this->repository,
+            (is_string($directory) && is_dir($directory) ? [$directory] : [$_SERVER['DOCUMENT_ROOT']]),
+            (is_string($appEnv) ? ['.env', '.env.' . $appEnv] : ['.env'])
+        );
         $dotenv->load();
         @define('DOTENV_LOADED', true);
     }
@@ -81,14 +81,20 @@ class EnvLocator implements EnvLocatorInterface
     }
 
     /**
-     * Returns the base repository with environment variables.
-     *
-     * @return RepositoryInterface
+     * @param mixed $value
+     * @return mixed
      */
-    protected function createEnvRepository(): RepositoryInterface
+    protected function formatValue($value)
     {
-        return RepositoryBuilder::createWithNoAdapters()
-            ->addAdapter(EnvAdapter::class)
-            ->make();
+        switch (true) {
+            case $value === 'null':
+                return null;
+            case in_array($value, ['true', 'false'], true):
+                return $value === 'true';
+            case is_numeric($value):
+                return false !== strpos((string)$value, '.') ? floatval($value) : intval($value);
+            default:
+                return $value;
+        }
     }
 }
